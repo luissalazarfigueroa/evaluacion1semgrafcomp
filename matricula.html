@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<title>Matricula</title>
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-light fixed-top bg-white">
+<div class="container">
+	<a class="navbar-brand" href="index.html">Matrícula y Docentes por tipo de establecimiento</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+	<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+		<ul class="navbar-nav ml-auto">
+			<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+			<li class="nav-item "><a class="nav-link" href="establecimiento.html">Establecimientos</a></li>
+				<li class="nav-item active"><a class="nav-link" href="matricula.html">Matrícula</a></li>
+				<li class="nav-item "><a class="nav-link" href="comparacion.html">Sectores</a></li>
+		</ul>
+	</div>
+	</div>
+	</nav>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js"></script>
+<script>
+//globales
+var data, n;
+var funcionando = 0, inactivos = 0;
+var municipal = 0, particular = 0, subvencionado = 0, otros = 0;
+var docentes = 0, docentes_municipal = 0, docentes_particular = 0, docentes_subvencionado = 0, docentes_otros = 0;
+var horasdoc = 0, horasdoc_municipal = 0, horasdoc_subvencionado = 0, horasdoc_particular = 0, horasdoc_otros = 0;
+var muj = 0, muj_municipal = 0, muj_subvencionado = 0, muj_particular = 0, muj_otros = 0;
+var estudiantes = 0, estudiantes_municipal = 0, estudiantes_subvencionado = 0, estudiantes_particular = 0, estudiantes_otros = 0;
+//voy a buscar el CSV
+
+function preload() {
+	data = loadTable('https://raw.githubusercontent.com/luissalazarfigueroa/datoscsv/master/docentematricula.csv	','csv','header');
+}
+//	esto se carga una vez
+function setup() {
+	console.log(data);
+	n = data.getRowCount();
+	//conteo de vivos y muertos
+	for (var a = 0; a < n; a++) {
+		if (data.get(a, 5) == 1){ municipal++ }
+		else if (data.get(a, 5) == 3){ particular++ }
+		else if (data.get(a, 5) == 2){ subvencionado++ }
+		else if (data.get(a, 5) > 3) { otros++ }
+	}
+
+
+	//conteo de vivas, muertas, vivos y muertos
+		for (var c = 0; c < n; c++) {
+			if (data.get(c, 7) == 1){ funcionando++ } else { inactivos++ }
+		}
+
+		for (var d = 0; d < n; d++) {
+				if (data.get(d, 5) == 1 && data.get(d,7) == 1){
+					x = data.getNum(d, 12);
+					estudiantes_municipal = estudiantes_municipal + x;
+				}
+				if (data.get(d, 5) == 2 && data.get(d,7) == 1){
+					y = data.getNum(d, 12);
+					estudiantes_subvencionado = estudiantes_subvencionado + y;
+				}
+				if (data.get(d, 5) == 3 && data.get(d,7) == 1){
+					z = data.getNum(d, 12);
+					estudiantes_particular = estudiantes_particular + z;
+				}
+				 else if (data.get(d, 5) > 3 && data.get(d,7) == 1){
+					 zz = data.getNum(d, 12);
+				 	estudiantes_otros = estudiantes_otros + zz}
+			}
+
+
+			for (var g = 0; g < n; g++) {
+					if (data.get(g, 5) == 1 && data.get(g,7) == 1){
+						x2 = data.getNum(g, 11);
+						muj_municipal = muj_municipal + x2;
+					}
+					if (data.get(g, 5) == 2 && data.get(g,7) == 1){
+						w2 = data.getNum(g, 11);
+						muj_subvencionado = muj_subvencionado + w2;
+					}
+					if (data.get(g, 5) == 3 && data.get(g,7) == 1){
+						u2 = data.getNum(g, 11);
+						muj_particular = muj_particular + u2;
+					}
+					 else if (data.get(g, 5) > 3 && data.get(g,7) == 1){
+						 uu2 = data.getNum(g, 11);
+						muj_otros = muj_otros + uu2}
+				}
+
+
+			for (var f = 0; f < n; f++) {
+					if (data.get(f, 5) == 1 && data.get(f,7) == 1){
+						v = data.getNum(f, 8);
+						docentes_municipal = docentes_municipal + v;
+					}
+					if (data.get(f, 5) == 2 && data.get(f,7) == 1){
+						w = data.getNum(f, 8);
+						docentes_subvencionado = docentes_subvencionado + w;
+					}
+					if (data.get(f, 5) == 3 && data.get(f,7) == 1){
+						u = data.getNum(f, 8);
+						docentes_particular = docentes_particular + u;
+					}
+					else if (data.get(f, 5) > 3 && data.get(f,7) == 1){
+					 uu = data.getNum(f, 8);
+					docentes_otros = docentes_otros + uu}
+				}
+
+				for (var j = 0; j < n; j++) {
+						if (data.get(j, 5) == 1 && data.get(j,7) == 1){
+							x2 = data.getNum(j, 9);
+							horasdoc_municipal = horasdoc_municipal + x2;
+						}
+						if (data.get(j, 5) == 2 && data.get(j,7) == 1){
+							y2 = data.getNum(j, 9);
+							horasdoc_subvencionado = horasdoc_subvencionado + y2;
+						}
+						if (data.get(j, 5) == 3 && data.get(j,7) == 1){
+							z2 = data.getNum(j, 9);
+							horasdoc_particular = horasdoc_particular + z2;
+						}
+						 else if (data.get(j, 5) > 3 && data.get(j,7) == 1){
+							 zz2 = data.getNum(j, 9);
+							horasdoc_otros = horasdoc_otros + zz2}
+					}
+
+	console.log("Total de estudiantes: " + (estudiantes_municipal+estudiantes_subvencionado+estudiantes_particular+estudiantes_otros))
+	console.log("Total de docentes: " + (docentes_municipal+docentes_subvencionado+docentes_particular+docentes_otros))
+	console.log("funcionando: " + funcionando);
+	console.log("inactivos : " + inactivos);
+	console.log("de un total de " + n + " establecimientos");
+	console.log("municipales: " + municipal);
+	console.log("particulares: " + particular);
+	console.log("otros: " + otros);
+	console.log("particular subvencionados: " + subvencionado);
+	console.log("Estudiantes en establecimientos municipales: " + estudiantes_municipal);
+	console.log("Estudiantes en establecimientos particular-subvencionados: " + estudiantes_subvencionado);
+	console.log("Estudiantes en establecimientos particulares: " + estudiantes_particular);
+	console.log("Estudiantes en otro tipo de establecimientos: " + estudiantes_otros);
+	console.log("docentes en establecimientos municipales: " + docentes_municipal);
+	console.log("docentes en establecimientos particular-subvencionados: " + docentes_subvencionado);
+	console.log("docentes en establecimientos particulares: " + docentes_particular);
+	console.log("docentes en otro tipo de establecimientos: " + docentes_otros);
+
+	var canvas = createCanvas(windowWidth, windowHeight);
+	canvas.position(0,0);
+	canvas.style('z-index','-1');
+	noStroke();
+	var resize = 0.0003;
+	var prom_horasdoc_mun = horasdoc_municipal/municipal
+	var prom_horasdoc_sub = horasdoc_subvencionado/subvencionado
+	var prom_horasdoc_par = horasdoc_particular/particular
+ 	var prom_horasdoc_otr = horasdoc_otros/otros
+	var estudiantes_total = estudiantes_municipal+estudiantes_subvencionado+estudiantes_particular+estudiantes_otros
+	var docentes_total = docentes_municipal+docentes_subvencionado+docentes_particular+docentes_otros
+//piechart
+
+
+
+	fill(0,200,150);
+	arc(width/4, height/2, 600, 600, 0, ((2*PI)*estudiantes_municipal)/estudiantes_total);
+	fill(0,150,200);
+	arc(width/4, height/2, 600, 600, ((2*PI)*estudiantes_municipal)/estudiantes_total, (((2*PI)*estudiantes_municipal)/estudiantes_total)+(((2*PI)*estudiantes_subvencionado)/estudiantes_total));
+	fill(200,0,75);
+	arc(width/4, height/2, 600, 600, (((2*PI)*estudiantes_municipal)/estudiantes_total)+(((2*PI)*estudiantes_subvencionado)/estudiantes_total), (((2*PI)*estudiantes_municipal)/estudiantes_total)+(((2*PI)*estudiantes_subvencionado)/estudiantes_total)+ (((2*PI)*estudiantes_particular)/estudiantes_total));
+	fill(255,185,0);
+	arc(width/4, height/2, 600, 600, 2*PI-(((2*PI)*estudiantes_otros)/estudiantes_total), 2*PI);
+
+	fill(0,120,100);
+	arc(width/4, height/2, (docentes_municipal*600)/estudiantes_municipal, (docentes_municipal*600)/estudiantes_municipal, 0, ((2*PI)*estudiantes_municipal)/estudiantes_total);
+	fill(0,80,150);
+	arc(width/4, height/2, (docentes_subvencionado*600)/estudiantes_subvencionado, (docentes_subvencionado*600)/estudiantes_subvencionado, ((2*PI)*estudiantes_municipal)/estudiantes_total, (((2*PI)*estudiantes_municipal)/estudiantes_total)+(((2*PI)*estudiantes_subvencionado)/estudiantes_total));
+	fill(120,0,50);
+	arc(width/4, height/2,(docentes_particular*600)/estudiantes_particular, (docentes_particular*600)/estudiantes_particular, (((2*PI)*estudiantes_municipal)/estudiantes_total)+(((2*PI)*estudiantes_subvencionado)/estudiantes_total), (((2*PI)*estudiantes_municipal)/estudiantes_total)+(((2*PI)*estudiantes_subvencionado)/estudiantes_total)+ (((2*PI)*estudiantes_particular)/estudiantes_total));
+	fill(255,106,0);
+	arc(width/4, height/2, (docentes_otros*600)/estudiantes_otros, (docentes_otros*600)/estudiantes_otros, 2*PI-(((2*PI)*estudiantes_otros)/estudiantes_total), 2*PI);
+
+	fill(0,200,150);
+	rect(width/1.2, height/2, 80, -(prom_horasdoc_mun*0.25));
+	fill(0,150,200);
+	rect((width/1.2)-100, height/2, 80, -(prom_horasdoc_sub*0.25));
+	fill(200,0,75);
+	rect((width/1.2)-200, height/2, 80, -(prom_horasdoc_par*0.25));
+	fill(255,185,0);
+	rect((width/1.2)-300, height/2, 80, -(prom_horasdoc_otr*0.25));
+
+	fill(0,0,0);
+	textSize(20);
+	text(Math.round(prom_horasdoc_mun),(width/1.2), (height/2), 400,200);
+	text(Math.round(prom_horasdoc_sub),(width/1.2)-100, (height/2), 400,200);
+	text(Math.round(prom_horasdoc_par),(width/1.2)-200, (height/2), 400,200);
+	text(Math.round(prom_horasdoc_otr),(width/1.2)-300, (height/2), 400,200);
+	text("promedio horas docentes totales por contrato" ,(width/1.2-300), (height/2)+30, 400,200);
+
+	fill(0,120,100);
+	textSize(36)
+	text(Math.round(estudiantes_municipal/docentes_municipal),(width/5.8), (height/1.38), 400,200)
+	textSize(20)
+		text("estudiantes por docente",(width/5.8), (height/1.3), 400,200)
+			textSize(36)
+
+	fill(0,80,150);
+	text(Math.round(estudiantes_subvencionado/docentes_subvencionado),(width/9), (height/2.45		), 70,100)
+	textSize(20)
+		text("estudiantes por docente",(width/9), (height/2.22), 400,200)
+
+	fill(120,0,50);
+			textSize(36)
+	text(Math.round(estudiantes_particular/docentes_particular),(width/2.8), (height/2.7	), 70,100)
+	textSize(20)
+		text("estudiantes por docente",(width/3.42), (height/2.4), 400,200)
+
+	fill(255,106,0);
+		textSize(36)
+		text(Math.round(estudiantes_otros/docentes_otros),(width/2.35), (height/2.45), 70,100)
+		textSize(20)
+			text("estudiantes por docente",(width/2.35), (height/2.20), 400,200)
+
+		fill(0,255,205);
+		textSize(12+Math.round(estudiantes_municipal*0.00004))
+		text(estudiantes_municipal,(width/4.3), (height/1.85), 400,200)
+		textSize(24)
+		text("estudiantes municipales",(width/4.3), (height/1.63), 700,100)
+
+		fill(0,205,255);
+		textSize(12+Math.round(estudiantes_subvencionado*0.00004))
+		text(estudiantes_subvencionado,(width/7), (height/4), 400,200)
+		textSize(24)
+		text("estudiantes subvencionados",(width/6), (height/4.2), 700,100)
+
+		fill(200,0,75);
+		textSize(12+Math.round(estudiantes_particular*0.00004))
+		text(estudiantes_particular,(width/2.4), (height/4), 400,200)
+		textSize(24)
+		text("estudiantes particulares",(width/2.4), (height/3.5), 700,100)
+
+	fill(255,106,0);
+		textSize(12+Math.round(estudiantes_otros*0.00004))
+		text(estudiantes_otros,(width/2.4), (height/3), 400,200)
+		textSize(24)
+		text("estudiantes otros establecimientos",(width/2.4), (height/2.8), 700,100)
+}
+
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

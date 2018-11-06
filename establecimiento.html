@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<title>Tipo de establecimientos</title>
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-light fixed-top bg-white">
+<div class="container">
+	<a class="navbar-brand" href="index.html">Tipo de establecimientos</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+	<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+		<ul class="navbar-nav ml-auto">
+			<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+			<li class="nav-item active"><a class="nav-link" href="establecimiento.html">Establecimientos</a></li>
+				<li class="nav-item "><a class="nav-link" href="matricula.html">Matrícula</a></li>
+        <li class="nav-item "><a class="nav-link" href="comparacion.html">Sectores</a></li>
+		</ul>
+	</div>
+</div>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.min.js"></script>
+<script>
+//globales
+var data, n;
+var funcionando = 0, inactivos = 0;
+var municipal = 0, particular = 0, subvencionado = 0, otros = 0;
+var docentes = 0, docentes_municipal = 0, docentes_particular = 0, docentes_subvencionado = 0, docentes_otros = 0;
+var estudiantes = 0, estudiantes_municipal = 0, estudiantes_subvencionado = 0, estudiantes_particular = 0, estudiantes_otros = 0;
+//voy a buscar el CSV
+
+function preload() {
+	data = loadTable('https://raw.githubusercontent.com/luissalazarfigueroa/datoscsv/master/docentematricula.csv	','csv','header');
+}
+//	esto se carga una vez
+function setup() {
+	console.log(data);
+	n = data.getRowCount();
+	//conteo de vivos y muertos
+	for (var a = 0; a < n; a++) {
+		if (data.get(a, 5) == 1){ municipal++ }
+		else if (data.get(a, 5) == 3){ particular++ }
+		else if (data.get(a, 5) == 2){ subvencionado++ }
+		else if (data.get(a, 5) > 3) { otros++ }
+	}
+
+
+	//conteo de vivas, muertas, vivos y muertos
+
+		for (var c = 0; c < n; c++) {
+			if (data.get(c, 7) == 1){ funcionando++ } else { inactivos++ }
+		}
+
+		for (var d = 0; d < n; d++) {
+				if (data.get(d, 5) == 1){
+					x = data.getNum(d, 12);
+					estudiantes_municipal = estudiantes_municipal + x;
+				}
+				if (data.get(d, 5) == 2){
+					y = data.getNum(d, 12);
+					estudiantes_subvencionado = estudiantes_subvencionado + y;
+				}
+				if (data.get(d, 5) == 3){
+					z = data.getNum(d, 12);
+					estudiantes_particular = estudiantes_particular + z;
+				}
+				else if (data.get(d, 5) > 3){
+ 				 zz = data.getNum(d, 12);
+ 				estudiantes_otros = estudiantes_otros + zz}
+ 		}
+
+			for (var f = 0; f < n; f++) {
+					if (data.get(f, 5) == 1){
+						v = data.getNum(f, 8);
+						docentes_municipal = docentes_municipal + v;
+					}
+					if (data.get(f, 5) == 2){
+						w = data.getNum(f, 8);
+						docentes_subvencionado = docentes_subvencionado + w;
+					}
+					if (data.get(f, 5) == 3){
+						u = data.getNum(f, 8);
+						docentes_particular = docentes_particular + u;
+					}
+					else if (data.get(f, 5) > 3 && data.get(f,7) == 1){
+	 				 uu = data.getNum(f, 8);
+	 				docentes_otros = docentes_otros + uu}
+	 		}
+
+	console.log("Total de estudiantes: " + (estudiantes_municipal+estudiantes_subvencionado+estudiantes_particular+estudiantes_otros))
+	console.log("Total de docentes: " + (docentes_municipal+docentes_subvencionado+docentes_particular+docentes_otros))
+	console.log("funcionando: " + funcionando);
+	console.log("inactivos : " + inactivos);
+	console.log("de un total de " + n + " establecimientos");
+	console.log("municipales: " + municipal);
+	console.log("particulares: " + particular);
+	console.log("otros: " + otros);
+	console.log("particular subvencionados: " + subvencionado);
+	console.log("Estudiantes en establecimientos municipales: " + estudiantes_municipal);
+	console.log("Estudiantes en establecimientos particular-subvencionados: " + estudiantes_subvencionado);
+	console.log("Estudiantes en establecimientos particulares: " + estudiantes_particular);
+	console.log("Estudiantes en otro tipo de establecimientos: " + estudiantes_otros);
+	console.log("docentes en establecimientos municipales: " + docentes_municipal);
+	console.log("docentes en establecimientos particular-subvencionados: " + docentes_subvencionado);
+	console.log("docentes en establecimientos particulares: " + docentes_particular);
+	console.log("docentes en otro tipo de establecimientos: " + docentes_otros);
+
+	var canvas = createCanvas(windowWidth, windowHeight);
+	canvas.position(0,0);
+	canvas.style('z-index','-1');
+	noStroke();
+
+	var estudiantes_total = estudiantes_municipal+estudiantes_subvencionado+estudiantes_particular+estudiantes_otros
+	var docentes_total = docentes_municipal+docentes_subvencionado+docentes_particular+docentes_otros
+//piechart
+
+
+	fill(0,200,150);
+	arc(width/2, height/1.5, 250, 250, 0, ((2*PI)*municipal)/n);
+	fill(0,150,200);
+	arc(width/2, height/1.5, 250, 250, ((2*PI)*municipal)/n, (((2*PI)*municipal)/n)+(((2*PI)*subvencionado)/n));
+	fill(200,0,75);
+	arc(width/2, height/1.5, 250, 250, (((2*PI)*municipal)/n)+(((2*PI)*subvencionado)/n), (((2*PI)*municipal)/n)+(((2*PI)*subvencionado)/n)+ (((2*PI)*particular)/n));
+	fill(255,185,0);
+	arc(width/2, height/1.5, 250, 250, 2*PI-(((2*PI)*otros)/n), 2*PI);
+
+
+
+//totales
+	fill(0,255);
+	textSize(12+Math.round(n*0.01))
+	text(n,(width/4),(height/3.4)	);
+	textSize(36)
+	text("de un total de",(width/3.8), (height/9.8	), 700,100);
+text("establecimientos",(width/3.8), (height/3.4	), 700,100);
+//municipales
+	fill(0,255);
+	textSize(12+Math.round(municipal*0.01))
+	text(municipal,(width/1.68),(height/1.25)	);
+	textSize(36)
+	text("municipales",(width/1.68), (height/1.25), 70,100);
+
+//particulares
+	fill(0,255);
+	textSize(12+Math.round(particular*0.01))
+	text(particular,(width/1.68),(height/1.8)	);
+	textSize(36)
+	text("particulares",(width/1.68), (height/1.8), 70,100);
+
+//subvencionados
+	fill(0,255);
+	textSize(12+Math.round(subvencionado*0.01))
+	text(subvencionado,(width/3.4),(height/1.55)	);
+	textSize(36)
+	text("subvencionados",(width/3.9), (height/1.55), 70,100);
+//otros
+	fill(0,255);
+	textSize(12+Math.round(otros*0.01))
+	text(otros,(width/1.68),(height/1.55)	);
+	textSize(36)
+	text("otros",(width/1.68), (height/1.55), 70,100);
+
+//funcionando // inactivos
+	fill(0,200,150);
+	rect(((width*inactivos)/n), height/2.5, ((width*funcionando)/n), 55);
+fill(200,0,0);
+rect(((width*inactivos)/n), height/2.5, -((width*inactivos)/n), 55);
+
+fill(0,255);
+textSize(12+Math.round(funcionando*0.01))
+text(funcionando,(width/1.8),(height/2.65)	);
+fill(255,255,255);
+textSize(36)
+text("funcionando",(width/1.75), (height/2.45	), 70,100);
+
+fill(0,255);
+textSize(12+Math.round(inactivos*0.01))
+text(inactivos,(width/13),(height/2.65)	);
+fill(255,255,255);
+textSize(36)
+text("inactivos",(width/13), (height/2.45		), 70,100);
+}
+
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
